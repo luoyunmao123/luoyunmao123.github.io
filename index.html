@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>罗云茂 - 环境设计作品集</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-color: #f5f5f7;
+            --card-bg: #ffffff;
+            --text-color: #1d1d1f;
+            --text-light: #6e6e73;
+            --footer-bg: #f5f5f7;
+            --nav-bg: rgba(255, 255, 255, 0.85);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.47;
+            overflow-x: hidden;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background-color: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        nav .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 44px;
+        }
+
+        nav .logo {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-color);
+            text-decoration: none;
+        }
+
+        nav .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        nav .nav-links a {
+            font-size: 0.85rem;
+            color: var(--text-color);
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        nav .nav-links a:hover {
+            opacity: 1;
+        }
+
+        .hero {
+            padding: 180px 0 120px;
+            text-align: center;
+            background-color: var(--card-bg);
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 12px;
+            color: var(--text-color);
+        }
+
+        .hero .subtitle {
+            font-size: 1.4rem;
+            font-weight: 400;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+
+        .hero .info {
+            font-size: 1rem;
+            font-weight: 400;
+            color: var(--text-light);
+        }
+
+        .project-card {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 60px 20px;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s ease;
+        }
+
+        .project-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .project-card:nth-child(even) {
+            background-color: var(--card-bg);
+        }
+
+        .project-card:nth-child(odd) {
+            background-color: var(--bg-color);
+        }
+
+        .project-card .container {
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .project-card h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+            color: var(--text-color);
+        }
+
+        .project-card .description {
+            font-size: 1.1rem;
+            font-weight: 400;
+            color: var(--text-light);
+            margin-bottom: 40px;
+        }
+
+        .project-image {
+            width: 100%;
+            max-width: 900px;
+            height: 500px;
+            background-color: #e8e8ed;
+            border-radius: 12px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, #f0f0f4 0%, #e8e8ed 100%);
+        }
+
+        .project-image::after {
+            content: '项目图片';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1rem;
+            color: #999999;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+        }
+
+        .project-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .skills {
+            padding: 100px 20px;
+            background-color: var(--card-bg);
+            text-align: center;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s ease;
+        }
+
+        .skills.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .skills .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .skills h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 40px;
+            color: var(--text-light);
+        }
+
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .skill-tag {
+            padding: 10px 24px;
+            background-color: var(--bg-color);
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: var(--text-light);
+        }
+
+        footer {
+            background-color: #1d1d1f;
+            color: #ffffff;
+            padding: 60px 20px 40px;
+        }
+
+        footer .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .footer-links a {
+            font-size: 0.85rem;
+            color: #86868b;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #ffffff;
+        }
+
+        .footer-contact {
+            text-align: center;
+            padding-bottom: 40px;
+            border-bottom: 1px solid #333333;
+            margin-bottom: 20px;
+        }
+
+        .footer-contact p {
+            font-size: 0.9rem;
+            color: #86868b;
+            margin-bottom: 8px;
+        }
+
+        .footer-contact a {
+            color: #0071e3;
+            text-decoration: none;
+        }
+
+        .copyright {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #86868b;
+        }
+
+        @media (max-width: 1024px) {
+            .project-image {
+                height: 420px;
+            }
+
+            .project-card h2 {
+                font-size: 2.2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 140px 0 80px;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero .subtitle {
+                font-size: 1.2rem;
+            }
+
+            .project-card {
+                padding: 40px 20px;
+                min-height: auto;
+            }
+
+            .project-card h2 {
+                font-size: 1.8rem;
+            }
+
+            .project-card .description {
+                font-size: 1rem;
+                margin-bottom: 25px;
+            }
+
+            .project-image {
+                height: 300px;
+                border-radius: 8px;
+            }
+
+            .skills {
+                padding: 60px 20px;
+            }
+
+            .skill-tag {
+                padding: 8px 20px;
+                font-size: 0.85rem;
+            }
+
+            .footer-links {
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .project-card h2 {
+                font-size: 1.5rem;
+            }
+
+            .project-image {
+                height: 220px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="#" class="logo">罗云茂</a>
+            <div class="nav-links">
+                <a href="#projects">项目</a>
+                <a href="#skills">技能</a>
+                <a href="#contact">联系</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container">
+            <h1>罗云茂</h1>
+            <p class="subtitle">环境设计 / 景观设计</p>
+            <p class="info">宜宾学院艺术设计学院 | 学号 231205106</p>
+        </div>
+    </section>
+
+    <section id="projects">
+        <div class="project-card">
+            <div class="container">
+                <h2>和平村老旧小区改造</h2>
+                <p class="description">景观更新设计，让老社区焕发新生</p>
+                <div class="project-image">
+                    <img src="" alt="和平村老旧小区改造">
+                </div>
+            </div>
+        </div>
+
+        <div class="project-card">
+            <div class="container">
+                <h2>人民村解放村老旧小区改造</h2>
+                <p class="description">社区空间优化方案</p>
+                <div class="project-image">
+                    <img src="" alt="人民村解放村老旧小区改造">
+                </div>
+            </div>
+        </div>
+
+        <div class="project-card">
+            <div class="container">
+                <h2>乡村景观设计</h2>
+                <p class="description">基础理论与实践调研</p>
+                <div class="project-image">
+                    <img src="" alt="乡村景观设计">
+                </div>
+            </div>
+        </div>
+
+        <div class="project-card">
+            <div class="container">
+                <h2>庭院别墅模型</h2>
+                <p class="description">3D建模与空间渲染</p>
+                <div class="project-image">
+                    <img src="" alt="庭院别墅模型">
+                </div>
+            </div>
+        </div>
+
+        <div class="project-card">
+            <div class="container">
+                <h2>蓝染主题展板设计</h2>
+                <p class="description">非遗文化的视觉转译</p>
+                <div class="project-image">
+                    <img src="" alt="蓝染主题展板设计">
+                </div>
+            </div>
+        </div>
+
+        <div class="project-card">
+            <div class="container">
+                <h2>蜡染非遗工艺调研</h2>
+                <p class="description">传统技艺的记录与传承</p>
+                <div class="project-image">
+                    <img src="" alt="蜡染非遗工艺调研">
+                </div>
+            </div>
+        </div>
+
+        <div class="project-card">
+            <div class="container">
+                <h2>AIGC赋能社区更新</h2>
+                <p class="description">多元主体共创路径研究</p>
+                <div class="project-image">
+                    <img src="" alt="AIGC赋能社区更新">
+                </div>
+            </div>
+        </div>
+
+        <div class="project-card">
+            <div class="container">
+                <h2>博物馆展示设计</h2>
+                <p class="description">文化空间的展陈叙事</p>
+                <div class="project-image">
+                    <img src="" alt="博物馆展示设计">
+                </div>
+            </div>
+        </div>
+
+        <div class="project-card">
+            <div class="container">
+                <h2>大创项目</h2>
+                <p class="description">创新创业实践</p>
+                <div class="project-image">
+                    <img src="" alt="大创项目">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills" class="skills">
+        <div class="container">
+            <h2>技能</h2>
+            <div class="skills-list">
+                <span class="skill-tag">3ds Max</span>
+                <span class="skill-tag">AutoCAD</span>
+                <span class="skill-tag">Blender</span>
+                <span class="skill-tag">D5渲染</span>
+                <span class="skill-tag">SketchUp</span>
+                <span class="skill-tag">Photoshop</span>
+                <span class="skill-tag">ArcGIS Pro</span>
+                <span class="skill-tag">剪映</span>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-contact">
+                <p>邮箱：<a href="mailto:luoyunmao@example.com">luoyunmao@example.com</a></p>
+                <p>电话：138-xxxx-xxxx | 微信：luoyunmao_design</p>
+            </div>
+            <div class="footer-links">
+                <a href="#projects">项目作品</a>
+                <a href="#skills">技能标签</a>
+                <a href="#">关于我</a>
+            </div>
+            <div class="copyright">
+                © 2024 罗云茂 环境设计作品集
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const projectCards = document.querySelectorAll('.project-card, .skills');
+            
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.15
+            });
+
+            projectCards.forEach(function(card) {
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>
