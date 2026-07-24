@@ -184,7 +184,67 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: block;
+        }
+
+        .project-image video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .project-image.has-video .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .project-image.has-video .play-button:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .project-image.has-video .play-button::before {
+            content: '';
+            width: 0;
+            height: 0;
+            border-left: 20px solid white;
+            border-top: 12px solid transparent;
+            border-bottom: 12px solid transparent;
+            margin-left: 3px;
+        }
+
+        .project-image.has-video.playing .play-button {
             display: none;
+        }
+
+        .video-toggle {
+            margin-top: 16px;
+            padding: 8px 20px;
+            background-color: var(--bg-color);
+            border: none;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .video-toggle:hover {
+            background-color: #e8e8ed;
+            color: var(--text-color);
         }
 
         .skills {
@@ -386,7 +446,7 @@
                 <h2>和平村老旧小区改造</h2>
                 <p class="description">景观更新设计，让老社区焕发新生</p>
                 <div class="project-image">
-                    <img src="" alt="和平村老旧小区改造">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=urban%20community%20renovation%20design%20old%20residential%20area%20landscape%20planning%20modern%20courtyard&image_size=landscape_16_9" alt="和平村老旧小区改造">
                 </div>
             </div>
         </div>
@@ -396,7 +456,7 @@
                 <h2>人民村解放村老旧小区改造</h2>
                 <p class="description">社区空间优化方案</p>
                 <div class="project-image">
-                    <img src="" alt="人民村解放村老旧小区改造">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=community%20space%20optimization%20urban%20renovation%20park%20design%20green%20area%20modern%20architecture&image_size=landscape_16_9" alt="人民村解放村老旧小区改造">
                 </div>
             </div>
         </div>
@@ -406,7 +466,7 @@
                 <h2>乡村景观设计</h2>
                 <p class="description">基础理论与实践调研</p>
                 <div class="project-image">
-                    <img src="" alt="乡村景观设计">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=rural%20landscape%20design%20countryside%20garden%20traditional%20village%20natural%20environment&image_size=landscape_16_9" alt="乡村景观设计">
                 </div>
             </div>
         </div>
@@ -416,7 +476,7 @@
                 <h2>庭院别墅模型</h2>
                 <p class="description">3D建模与空间渲染</p>
                 <div class="project-image">
-                    <img src="" alt="庭院别墅模型">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20villa%20courtyard%20design%203D%20rendering%20luxury%20residence%20landscape%20architecture&image_size=landscape_16_9" alt="庭院别墅模型">
                 </div>
             </div>
         </div>
@@ -426,7 +486,7 @@
                 <h2>蓝染主题展板设计</h2>
                 <p class="description">非遗文化的视觉转译</p>
                 <div class="project-image">
-                    <img src="" alt="蓝染主题展板设计">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=blue%20indigo%20dyeing%20traditional%20craft%20exhibition%20board%20design%20cultural%20art%20display&image_size=landscape_16_9" alt="蓝染主题展板设计">
                 </div>
             </div>
         </div>
@@ -436,7 +496,7 @@
                 <h2>蜡染非遗工艺调研</h2>
                 <p class="description">传统技艺的记录与传承</p>
                 <div class="project-image">
-                    <img src="" alt="蜡染非遗工艺调研">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=batik%20wax%20dyeing%20traditional%20craftsmanship%20ethnic%20art%20cultural%20heritage&image_size=landscape_16_9" alt="蜡染非遗工艺调研">
                 </div>
             </div>
         </div>
@@ -446,7 +506,7 @@
                 <h2>AIGC赋能社区更新</h2>
                 <p class="description">多元主体共创路径研究</p>
                 <div class="project-image">
-                    <img src="" alt="AIGC赋能社区更新">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=futuristic%20community%20renewal%20AI%20generated%20urban%20design%20modern%20smart%20city&image_size=landscape_16_9" alt="AIGC赋能社区更新">
                 </div>
             </div>
         </div>
@@ -456,7 +516,7 @@
                 <h2>博物馆展示设计</h2>
                 <p class="description">文化空间的展陈叙事</p>
                 <div class="project-image">
-                    <img src="" alt="博物馆展示设计">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=museum%20exhibition%20design%20cultural%20display%20space%20modern%20architecture%20lighting&image_size=landscape_16_9" alt="博物馆展示设计">
                 </div>
             </div>
         </div>
@@ -466,7 +526,7 @@
                 <h2>大创项目</h2>
                 <p class="description">创新创业实践</p>
                 <div class="project-image">
-                    <img src="" alt="大创项目">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=innovation%20startup%20project%20design%20thinking%20creative%20workspace%20modern%20studio&image_size=landscape_16_9" alt="大创项目">
                 </div>
             </div>
         </div>
@@ -521,6 +581,48 @@
 
             projectCards.forEach(function(card) {
                 observer.observe(card);
+            });
+
+            const videoImages = document.querySelectorAll('.project-image.has-video');
+            videoImages.forEach(function(container) {
+                const video = container.querySelector('video');
+                const playButton = container.querySelector('.play-button');
+                
+                if (video && playButton) {
+                    playButton.addEventListener('click', function() {
+                        video.play();
+                        container.classList.add('playing');
+                    });
+                    
+                    video.addEventListener('pause', function() {
+                        container.classList.remove('playing');
+                    });
+                    
+                    video.addEventListener('ended', function() {
+                        container.classList.remove('playing');
+                    });
+                }
+            });
+
+            document.querySelectorAll('.video-toggle').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    const container = this.parentElement.querySelector('.project-image');
+                    const video = container.querySelector('video');
+                    const img = container.querySelector('img');
+                    
+                    if (video && img) {
+                        if (video.style.display === 'none') {
+                            video.style.display = 'block';
+                            img.style.display = 'none';
+                            this.textContent = '切换为图片';
+                        } else {
+                            video.style.display = 'none';
+                            video.pause();
+                            img.style.display = 'block';
+                            this.textContent = '切换为视频';
+                        }
+                    }
+                });
             });
         });
     </script>
