@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>编程思维小游戏 - 机器人冒险</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .game-header h1 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .game-header p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .level-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 12px 20px;
+            background: #f5f5f5;
+            border-radius: 12px;
+        }
+
+        .level-info span {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .level-info .level-num {
+            color: #667eea;
+            font-size: 1.2rem;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 4px;
+            background: #e0e0e0;
+            padding: 8px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            aspect-ratio: 1;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cell {
+            background: white;
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .cell.start {
+            background: #e8f5e9;
+        }
+
+        .cell.goal {
+            background: #fff3e0;
+        }
+
+        .cell.wall {
+            background: #424242;
+        }
+
+        .cell.path {
+            background: #e3f2fd;
+        }
+
+        .robot {
+            font-size: 1.8rem;
+            transition: all 0.4s ease;
+            transform: rotate(0deg);
+        }
+
+        .robot.north { transform: rotate(0deg); }
+        .robot.east { transform: rotate(90deg); }
+        .robot.south { transform: rotate(180deg); }
+        .robot.west { transform: rotate(270deg); }
+
+        .goal-marker {
+            font-size: 1.5rem;
+        }
+
+        .command-panel {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .command-panel h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .command-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .cmd-btn {
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            user-select: none;
+        }
+
+        .cmd-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .cmd-btn.forward {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .cmd-btn.turn-left {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .cmd-btn.turn-right {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .cmd-btn.loop-start {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+        }
+
+        .cmd-btn.loop-end {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+        }
+
+        .cmd-btn.clear-all {
+            background: #e53935;
+            color: white;
+        }
+
+        .cmd-btn.run {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 14px 32px;
+            font-size: 1.1rem;
+        }
+
+        .cmd-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .code-area {
+            min-height: 80px;
+            background: #2d2d2d;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .code-block {
+            padding: 8px 16px;
+            background: #4a4a4a;
+            color: white;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .code-block:hover {
+            background: #5a5a5a;
+            transform: scale(1.05);
+        }
+
+        .code-block.forward { border-left: 4px solid #667eea; }
+        .code-block.turn-left { border-left: 4px solid #f5576c; }
+        .code-block.turn-right { border-left: 4px solid #4facfe; }
+        .code-block.loop-start { border-left: 4px solid #43e97b; }
+        .code-block.loop-end { border-left: 4px solid #fa709a; }
+
+        .code-block .remove-btn {
+            font-size: 0.7rem;
+            color: #aaa;
+            margin-left: 6px;
+        }
+
+        .code-block .remove-btn:hover {
+            color: #ff4444;
+        }
+
+        .instructions {
+            background: #e3f2fd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .instructions h4 {
+            color: #1976d2;
+            margin-bottom: 8px;
+        }
+
+        .instructions ul {
+            color: #424242;
+            font-size: 0.9rem;
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 5px;
+        }
+
+        .message {
+            text-align: center;
+            padding: 12px 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .message.show {
+            opacity: 1;
+        }
+
+        .message.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .message.error {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .message.info {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .level-selector {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .level-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #e0e0e0;
+            color: #666;
+        }
+
+        .level-btn:hover {
+            background: #d0d0d0;
+        }
+
+        .level-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .level-btn.completed {
+            background: #4caf50;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .game-container {
+                padding: 20px;
+            }
+
+            .game-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .cmd-btn {
+                padding: 10px 16px;
+                font-size: 0.9rem;
+            }
+
+            .game-board {
+                max-width: 350px;
+            }
+
+            .cell {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <h1>🤖 机器人冒险</h1>
+            <p>通过编程指令控制机器人到达终点！</p>
+        </div>
+
+        <div class="level-info">
+            <span>关卡: <span class="level-num">1</span></span>
+            <span>步数: <span class="step-count">0</span></span>
+            <span>最高分: <span class="best-score">--</span></span>
+        </div>
+
+        <div class="level-selector" id="levelSelector"></div>
+
+        <div class="game-board" id="gameBoard"></div>
+
+        <div class="message" id="message"></div>
+
+        <div class="command-panel">
+            <h3>🎯 添加指令</h3>
+            <div class="command-buttons">
+                <button class="cmd-btn forward" onclick="addCommand('forward')">
+                    ⬆️ 前进
+                </button>
+                <button class="cmd-btn turn-left" onclick="addCommand('turn-left')">
+                    ↩️ 左转
+                </button>
+                <button class="cmd-btn turn-right" onclick="addCommand('turn-right')">
+                    ↪️ 右转
+                </button>
+                <button class="cmd-btn loop-start" onclick="addCommand('loop-start')">
+                    🔄 循环开始
+                </button>
+                <button class="cmd-btn loop-end" onclick="addCommand('loop-end')">
+                    ⏹️ 循环结束
+                </button>
+                <button class="cmd-btn clear-all" onclick="clearCode()">
+                    🗑️ 清空
+                </button>
+                <button class="cmd-btn run" onclick="runCode()">
+                    ▶️ 运行
+                </button>
+            </div>
+
+            <div class="code-area" id="codeArea">
+                <span style="color: #666;">点击上方按钮添加指令...</span>
+            </div>
+
+            <div class="instructions">
+                <h4>📖 游戏说明</h4>
+                <ul>
+                    <li><strong>⬆️ 前进</strong>：机器人向前移动一格</li>
+                    <li><strong>↩️ 左转</strong>：机器人向左转90度</li>
+                    <li><strong>↪️ 右转</strong>：机器人向右转90度</li>
+                    <li><strong>🔄 循环</strong>：重复执行循环内的指令（最多重复3次）</li>
+                    <li>目标：让机器人到达黄色终点 🚩</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const LEVELS = [
+            {
+                name: "简单起步",
+                grid: [
+                    [0,0,0,0,0,0,0,0],
+                    [0,1,0,0,0,0,0,0],
+                    [0,0,0,0,0,0,0,0],
+                    [0,0,0,0,0,0,0,0],
+                    [0,0,0,0,0,0,0,0],
+                    [0,0,0,0,0,0,0,0],
+                    [0,0,0,0,0,0,0,0],
+                    [0,0,0,0,0,0,0,2]
+                ],
+                start: { x: 1, y: 1 },
+                goal: { x: 7, y: 7 },
+                startDir: 'east'
+            },
+            {
+                name: "小转弯",
+                grid: [
+                    [0,0,0,0,0,0,0,0],
+                    [0,1,0,0,0,0,0,0],
+                    [0,0,0,0,0,0,0,0],
+                    [0,0,0,0,0,0,0,0],
+                    [0,0,0,0,0,0,0,0],
+                    [0,0,0,0,0,0,2,0],
+                    [0,0,0,0,0,0,0,0],
+                    [0,0,0,0,0,0,0,0]
+                ],
+                start: { x: 1, y: 1 },
+                goal: { x: 6, y: 5 },
+                startDir: 'east'
+            },
+            {
+                name: "穿墙术",
+                grid: [
+                    [0,0,0,0,0,0,0,0],
+                    [0,1,3,3,0,0,0,0],
+                    [0,0,0,3,0,0,0,0],
+                    [0,0,0,3,0,0,0,0],
+                    [0,0,0,3,0,0,0,0],
+                    [0,0,0,3,0,0,0,0],
+                    [0,0,0,0,0,0,2,0],
+                    [0,0,0,0,0,0,0,0]
+                ],
+                start: { x: 1, y: 1 },
+                goal: { x: 6, y: 6 },
+                startDir: 'south'
+            },
+            {
+                name: "迷宫初探",
+                grid: [
+                    [0,0,0,0,0,0,0,0],
+                    [0,1,0,3,0,3,0,0],
+                    [0,0,0,3,0,3,0,0],
+                    [0,3,0,0,0,3,0,0],
+                    [0,3,0,3,0,3,0,0],
+                    [0,3,0,0,0,0,0,0],
+                    [0,0,0,3,3,3,2,0],
+                    [0,0,0,0,0,0,0,0]
+                ],
+                start: { x: 1, y: 1 },
+                goal: { x: 6, y: 6 },
+                startDir: 'south'
+            },
+            {
+                name: "循环挑战",
+                grid: [
+                    [0,0,0,0,0,0,0,0],
+                    [0,1,0,0,0,0,0,0],
+                    [0,0,0,0,0,0,0,0],
+                    [0,0,0,3,3,3,0,0],
+                    [0,0,0,0,0,3,0,0],
+                    [0,0,0,0,0,3,0,0],
+                    [0,0,0,0,0,3,2,0],
+                    [0,0,0,0,0,0,0,0]
+                ],
+                start: { x: 1, y: 1 },
+                goal: { x: 6, y: 6 },
+                startDir: 'south'
+            },
+            {
+                name: "终极考验",
+                grid: [
+                    [0,0,0,0,0,0,0,0],
+                    [0,1,0,3,0,3,0,0],
+                    [0,0,0,3,0,3,0,0],
+                    [3,3,0,0,0,3,0,3],
+                    [0,0,0,3,0,0,0,3],
+                    [0,3,0,3,0,3,0,3],
+                    [0,3,0,0,0,0,2,0],
+                    [0,0,0,0,0,0,0,0]
+                ],
+                start: { x: 1, y: 1 },
+                goal: { x: 6, y: 6 },
+                startDir: 'east'
+            }
+        ];
+
+        let currentLevel = 0;
+        let robot = { x: 0, y: 0, dir: 'east' };
+        let code = [];
+        let isRunning = false;
+        let completedLevels = [];
+
+        function init() {
+            loadCompletedLevels();
+            renderLevelSelector();
+            loadLevel(0);
+        }
+
+        function loadCompletedLevels() {
+            const saved = localStorage.getItem('codingGameCompleted');
+            if (saved) {
+                completedLevels = JSON.parse(saved);
+            }
+        }
+
+        function saveCompletedLevel(level) {
+            if (!completedLevels.includes(level)) {
+                completedLevels.push(level);
+                localStorage.setItem('codingGameCompleted', JSON.stringify(completedLevels));
+                renderLevelSelector();
+            }
+        }
+
+        function renderLevelSelector() {
+            const selector = document.getElementById('levelSelector');
+            selector.innerHTML = '';
+            
+            LEVELS.forEach((_, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'level-btn';
+                if (index === currentLevel) btn.classList.add('active');
+                if (completedLevels.includes(index)) btn.classList.add('completed');
+                btn.textContent = index + 1;
+                btn.onclick = () => loadLevel(index);
+                selector.appendChild(btn);
+            });
+        }
+
+        function loadLevel(levelIndex) {
+            if (isRunning) return;
+            
+            currentLevel = levelIndex;
+            const level = LEVELS[levelIndex];
+            
+            robot = { ...level.start, dir: level.startDir };
+            code = [];
+            
+            document.querySelector('.level-num').textContent = levelIndex + 1;
+            document.querySelector('.step-count').textContent = '0';
+            
+            const savedScore = localStorage.getItem(`codingGameLevel${levelIndex}`);
+            document.querySelector('.best-score').textContent = savedScore || '--';
+            
+            renderLevelSelector();
+            renderBoard();
+            renderCode();
+            hideMessage();
+        }
+
+        function renderBoard() {
+            const board = document.getElementById('gameBoard');
+            const level = LEVELS[currentLevel];
+            board.innerHTML = '';
+
+            for (let y = 0; y < 8; y++) {
+                for (let x = 0; x < 8; x++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    
+                    const cellType = level.grid[y][x];
+                    if (cellType === 1) cell.classList.add('start');
+                    if (cellType === 2) cell.classList.add('goal');
+                    if (cellType === 3) cell.classList.add('wall');
+                    
+                    if (robot.x === x && robot.y === y) {
+                        const robotEmoji = document.createElement('span');
+                        robotEmoji.className = `robot ${robot.dir}`;
+                        robotEmoji.textContent = '🤖';
+                        cell.appendChild(robotEmoji);
+                    } else if (level.goal.x === x && level.goal.y === y) {
+                        const goalEmoji = document.createElement('span');
+                        goalEmoji.className = 'goal-marker';
+                        goalEmoji.textContent = '🚩';
+                        cell.appendChild(goalEmoji);
+                    }
+                    
+                    board.appendChild(cell);
+                }
+            }
+        }
+
+        function addCommand(type) {
+            if (isRunning) return;
+            
+            if (type === 'loop-start') {
+                code.push({ type: 'loop-start', count: 0 });
+            } else if (type === 'loop-end') {
+                const lastLoopStart = code.lastIndexOf(code.find(c => c.type === 'loop-start' && c.count === 0));
+                if (lastLoopStart !== -1) {
+                    code.push({ type: 'loop-end' });
+                } else {
+                    showMessage('请先添加循环开始！', 'error');
+                }
+            } else {
+                code.push({ type });
+            }
+            
+            renderCode();
+        }
+
+        function removeCommand(index) {
+            if (isRunning) return;
+            code.splice(index, 1);
+            renderCode();
+        }
+
+        function clearCode() {
+            if (isRunning) return;
+            code = [];
+            renderCode();
+        }
+
+        function renderCode() {
+            const area = document.getElementById('codeArea');
+            
+            if (code.length === 0) {
+                area.innerHTML = '<span style="color: #666;">点击上方按钮添加指令...</span>';
+                return;
+            }
+
+            area.innerHTML = '';
+            code.forEach((cmd, index) => {
+                const block = document.createElement('div');
+                block.className = `code-block ${cmd.type}`;
+                
+                let label = '';
+                let icon = '';
+                
+                switch(cmd.type) {
+                    case 'forward': label = '前进'; icon = '⬆️'; break;
+                    case 'turn-left': label = '左转'; icon = '↩️'; break;
+                    case 'turn-right': label = '右转'; icon = '↪️'; break;
+                    case 'loop-start': label = '循环'; icon = '🔄'; break;
+                    case 'loop-end': label = '结束'; icon = '⏹️'; break;
+                }
+                
+                block.innerHTML = `${icon} ${label} <span class="remove-btn" onclick="removeCommand(${index})">×</span>`;
+                area.appendChild(block);
+            });
+        }
+
+        async function runCode() {
+            if (isRunning || code.length === 0) return;
+            
+            isRunning = true;
+            showMessage('运行中...', 'info');
+            
+            const level = LEVELS[currentLevel];
+            const steps = expandCode(code);
+            let stepsTaken = 0;
+            
+            for (const step of steps) {
+                if (stepsTaken > 50) {
+                    showMessage('步数过多，程序可能陷入死循环！', 'error');
+                    isRunning = false;
+                    return;
+                }
+                
+                await executeStep(step);
+                stepsTaken++;
+                document.querySelector('.step-count').textContent = stepsTaken;
+                
+                if (robot.x === level.goal.x && robot.y === level.goal.y) {
+                    showMessage(`🎉 恭喜通关！用时 ${stepsTaken} 步！`, 'success');
+                    saveCompletedLevel(currentLevel);
+                    
+                    const currentBest = localStorage.getItem(`codingGameLevel${currentLevel}`);
+                    if (!currentBest || stepsTaken < parseInt(currentBest)) {
+                        localStorage.setItem(`codingGameLevel${currentLevel}`, stepsTaken.toString());
+                        document.querySelector('.best-score').textContent = stepsTaken;
+                    }
+                    
+                    setTimeout(() => {
+                        if (currentLevel < LEVELS.length - 1) {
+                            loadLevel(currentLevel + 1);
+                        }
+                    }, 1500);
+                    
+                    isRunning = false;
+                    return;
+                }
+                
+                await delay(500);
+            }
+            
+            showMessage('❌ 机器人没有到达终点，请检查指令！', 'error');
+            isRunning = false;
+        }
+
+        function expandCode(codeArray) {
+            const expanded = [];
+            let i = 0;
+            
+            while (i < codeArray.length) {
+                if (codeArray[i].type === 'loop-start') {
+                    const loopStart = i;
+                    const loopEnd = codeArray.findIndex((c, idx) => idx > loopStart && c.type === 'loop-end');
+                    
+                    if (loopEnd !== -1) {
+                        const loopBody = codeArray.slice(loopStart + 1, loopEnd);
+                        for (let j = 0; j < 3; j++) {
+                            expanded.push(...expandCode(loopBody));
+                        }
+                        i = loopEnd + 1;
+                    } else {
+                        expanded.push(codeArray[i]);
+                        i++;
+                    }
+                } else {
+                    expanded.push(codeArray[i]);
+                    i++;
+                }
+            }
+            
+            return expanded;
+        }
+
+        function executeStep(cmd) {
+            return new Promise(resolve => {
+                const level = LEVELS[currentLevel];
+                
+                switch(cmd.type) {
+                    case 'forward':
+                        const nextPos = getNextPosition();
+                        if (nextPos.x >= 0 && nextPos.x < 8 && nextPos.y >= 0 && nextPos.y < 8) {
+                            if (level.grid[nextPos.y][nextPos.x] !== 3) {
+                                robot.x = nextPos.x;
+                                robot.y = nextPos.y;
+                            }
+                        }
+                        break;
+                    case 'turn-left':
+                        const leftTurns = { north: 'west', west: 'south', south: 'east', east: 'north' };
+                        robot.dir = leftTurns[robot.dir];
+                        break;
+                    case 'turn-right':
+                        const rightTurns = { north: 'east', east: 'south', south: 'west', west: 'north' };
+                        robot.dir = rightTurns[robot.dir];
+                        break;
+                }
+                
+                renderBoard();
+                resolve();
+            });
+        }
+
+        function getNextPosition() {
+            const moves = {
+                north: { x: 0, y: -1 },
+                east: { x: 1, y: 0 },
+                south: { x: 0, y: 1 },
+                west: { x: -1, y: 0 }
+            };
+            const move = moves[robot.dir];
+            return { x: robot.x + move.x, y: robot.y + move.y };
+        }
+
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function showMessage(text, type) {
+            const message = document.getElementById('message');
+            message.textContent = text;
+            message.className = `message show ${type}`;
+        }
+
+        function hideMessage() {
+            const message = document.getElementById('message');
+            message.classList.remove('show');
+        }
+
+        init();
+    </script>
+</body>
+</html>
